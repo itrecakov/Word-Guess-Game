@@ -1,46 +1,97 @@
-var computerChoice = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
-var wins = 0;
-var losses = 0;
-var guessesLeft = 10;
-var lettersUsed = [];
-var ranLetter = ranLetter;
-var eachofLetters = null;
+var wordOptions = ["beyonce", "taylor swift", "kim kardashian", "jennifer aniston", "oprah winfrey", "angelina jolie", "justin bieber", "tom hanks"];
+var selectedWord = "";
+var lettersinWord = [];
+var numBlanks = 0;
+var blanksAndSuccesses = []; 
+var wrongLetters = [];
 
-var ranLetter = computerChoice[Math.floor(Math.random() * commputerChoice.length)];
+var winCount = 0;
+var lossCount = 0;
+var guessesLeft = 9;
 
-function countGuessesLeft() {
-    ranLetter = computerChoice[Math.floor(Math.random() * computerChoice.length)];
+function startGame () {
+    selectedWord = wordOptions[Math.floor(Math.random() * wordOptions.length)];
+    lettersinWord = selectedWord.split("");
+    numBlanks = lettersinWord.length;
+
+    guessesLeft =9;
+    wrongLetters = [];
+    blanksAndSuccesses = [];
+
+    for (var i=0; i<numBlanks; i++){
+        blanksAndSuccesses.push("_");
+    }
+
+    document.getElementById("wordToGuess").innerHTML = blanksAndSuccesses.join(" ");
+    document.getElementById("numGuesses").innerHTML = guessesLeft;
+    document.getElementById("winCounter").innerHTML = winCount;
+    document.getElementById("lossCounter").innerHTML = lossCount;
+
+
+    console.log(selectedWord);
+    console.log(lettersinWord);
+    console.log(numBlanks);
+    console.log(blanksAndSuccesses);
+}   
+
+function checkLetters(letter) {
+    var isLetterInWord = false;
+
+    for (i=0; i<numBlanks; i++){
+        if(selectedWord[i] == letter) {
+            isLetterInWord = true;
+        }
+    }
+
+    if(isLetterInWord) {
+        for (var i=0; i<numBlanks; i++) {
+            if(selectedWord[i] == letter) {
+                blanksAndSuccesses[i] = letter;
+            }
+        }
+    }
+  
+    else {
+        wrongLetters.push(letter);
+        guessesLeft--
+    }
+
+    console.log(blanksAndSuccesses);
 }
 
-document.onkeyup = function (event) {
-    var playerGuess = event.key;
-    if playerGuess === ranLetter) {
-        wins++;
-        guessesLeft = 10;
-        lettersUsed = [];
+function roundComplete(){
+    console.log("Win Count: " + winCount + " | Loss Count: " + lossCount + " | Guesses Left: " + guessesLeft);
+
+    document.getElementById("numGuesses").innerHTML = guessesLeft;
+    document.getElementById("wordToGuess").innerHTML = blanksAndSuccesses.join(" ");
+    document.getElementById("wrongGuesses").innerHTML = wrongLetters.join(" ");
+    
+    if (lettersinWord.toString() == blanksAndSuccesses.toString()) {
+        winCount++;
+        alert("You Won!");
+
+        document.getElementById("winCounter").innerHTML = winCount;
+
+        startGame();
+
+    }
+ 
+    else if (guessesLeft == 0) {
+        lossCount++;
+        alert("You Lost!");
+
+        document.getElementById("lossCounter").innerHTML = lossCount;
+
+        startGame();
     }
 }
 
-countGuessesLeft();
-if (playerGuess !== ranLetter) {
-    guessesLeft--;
 
+startGame();
+
+document.onkeyup = function(event) {
+    var letterGuessed = String.fromCharCode(event.keyCode).toLowerCase();
+    checkLetters(letterGuessed);
+    roundComplete();
+    console.log(letterGuessed);
 }
-
-if (guessesLeft = 0) {
-    losses++;
-    lettersUsed = [];
-    guessesLeft: 10;
-}
-if (guessesLeft.indexOf(playerGuess) >= 0) {
-
-} else {
-      guessesLeft.push(playerGuess);
-      document.getElementById('playerGuess').innerHTML = guessesLeft;
-}
-
-document.getElementById('Wins').innerHTML = wins;
-document.getElementById('losses').innerHTML = losses;
-document.getElementById('guessesLeft').innerHTML = guessesLeft;
-
-};
